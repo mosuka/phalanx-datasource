@@ -1,0 +1,19 @@
+{
+    "query": "method:GET",
+    "boost": 1.0,
+    "start": 0,
+    "num": 10,
+    "sort_by": "-_score",
+    "fields": [
+        "host",
+        "user-identifier",
+        "datetime",
+        "method",
+        "request",
+        "protocol",
+        "status",
+        "bytes",
+        "referer",
+        "_id"
+    ]
+}

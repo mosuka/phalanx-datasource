@@ -1,0 +1,236 @@
+{
+	"index_uri": "file:///tmp/phalanx/indexes/logs",
+	"index_mapping": {
+		"host": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		},
+		"user-identifier": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		},
+		"datetime": {
+			"type": "datetime",
+			"options": {
+				"index": true,
+				"store": true,
+				"sortable": true,
+				"aggregatable": true
+			}
+		},
+		"method": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		},
+		"request": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		},
+		"protocol": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		},
+		"status": {
+			"type": "numeric",
+			"options": {
+				"index": true,
+				"store": true,
+				"sortable": true,
+				"aggregatable": true
+			}
+		},
+		"bytes": {
+			"type": "numeric",
+			"options": {
+				"index": true,
+				"store": true,
+				"sortable": true,
+				"aggregatable": true
+			}
+		},
+		"referer": {
+			"type": "text",
+			"options": {
+				"index": true,
+				"store": true,
+				"term_positions": false,
+				"highlight": false,
+				"sortable": true,
+				"aggregatable": true
+			},
+			"analyzer": {
+				"char_filters": [
+					{
+						"name": "ascii_folding"
+					},
+					{
+						"name": "unicode_normalize",
+						"options": {
+							"form": "NFKC"
+						}
+					}
+				],
+				"tokenizer": {
+					"name": "single_token"
+				},
+				"token_filters": [
+					{
+						"name": "lower_case"
+					}
+				]
+			}
+		}
+	},
+	"num_shards": 1,
+	"default_search_field": "_all",
+	"default_analyzer": {
+		"tokenizer": {
+			"name": "unicode"
+		},
+		"token_filters": [
+			{
+				"name": "lower_case"
+			}
+		]
+	}
+}

@@ -22,6 +22,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const { range } = options;
     const from = range!.from.valueOf();
     const to = range!.to.valueOf();
+    const endpoint = this.endpoint;
+
+    console.log('options', options);
+    console.log('from', from);
+    console.log('to', to);
+    console.log('endpoint', endpoint);
+    console.log('rfc3339', range!.from.toISOString());
 
     // Return a constant for each query.
     const data = options.targets.map(target => {
