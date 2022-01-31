@@ -25,7 +25,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const endpoint = this.endpoint;
 
     // Return a constant for each query.
-    const data = options.targets.map(target => {
+    const data = options.targets.map(async function(target) {
       const query = defaults(target, defaultQuery);
 
       const indexName = target.indexName;
@@ -41,7 +41,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       let body = {
         query: `${query.queryText}`,
         start: 0,
-        num: Number.MAX_SAFE_INTEGER,
+        num: 1000,
         sort_by: '-_score',
       };
 
@@ -49,11 +49,22 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       console.log('headers', headers);
       console.log('method', method);
       console.log('body', body);
-      fetch(url, {
-        method: method,
+
+      const resp = await fetch(url, {
+        method: 'POST',
         headers: headers,
         body: JSON.stringify(body),
-      });
+      })
+        .then(response => {
+          console.log('status', response.status);
+          return response.json();
+        })
+        .catch(error => {
+          console.log('error', error);
+          return `{}`;
+        });
+
+      console.log('resp', resp);
 
       return new MutableDataFrame({
         refId: query.refId,
