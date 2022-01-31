@@ -24,15 +24,37 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const to = range!.to.valueOf();
     const endpoint = this.endpoint;
 
-    console.log('options', options);
-    console.log('from', from);
-    console.log('to', to);
-    console.log('endpoint', endpoint);
-    console.log('rfc3339', range!.from.toISOString());
-
     // Return a constant for each query.
     const data = options.targets.map(target => {
       const query = defaults(target, defaultQuery);
+
+      const indexName = target.indexName;
+
+      var url = `${endpoint}/v1/indexes/${indexName}/_search`;
+
+      let headers = {
+        'Content-Type': 'application/json',
+      };
+
+      let method = 'POST';
+
+      let body = {
+        query: `${query.queryText}`,
+        start: 0,
+        num: Number.MAX_SAFE_INTEGER,
+        sort_by: '-_score',
+      };
+
+      console.log('url', url);
+      console.log('headers', headers);
+      console.log('method', method);
+      console.log('body', body);
+      fetch(url, {
+        method: method,
+        headers: headers,
+        body: JSON.stringify(body),
+      });
+
       return new MutableDataFrame({
         refId: query.refId,
         fields: [
@@ -54,9 +76,41 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       };
     }
 
-    return {
-      status: 'success',
-      message: 'Success',
+    var url = `${this.endpoint}/readyz`;
+
+    let headers = {
+      'Content-Type': 'application/json',
     };
+
+    console.log('url', url);
+    console.log('headers', headers);
+
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: headers,
+    })
+      .then(response => {
+        if (response.status === 200) {
+          return {
+            status: 'success',
+            message: 'Success',
+          };
+        } else {
+          return {
+            status: 'failure',
+            message: `Failure to connect. Status code: ${response.status}`,
+          };
+        }
+      })
+      .catch(error => {
+        return {
+          status: 'failure',
+          message: 'Failure to connect. Error: ' + error.message,
+        };
+      });
+
+    console.log('message', resp.message);
+
+    return resp;
   }
 }

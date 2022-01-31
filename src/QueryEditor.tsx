@@ -12,8 +12,10 @@ type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
 export class QueryEditor extends PureComponent<Props> {
   onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query } = this.props;
+    const { onChange, query, onRunQuery } = this.props;
     onChange({ ...query, queryText: event.target.value });
+    // executes the query
+    onRunQuery();
   };
 
   onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +25,16 @@ export class QueryEditor extends PureComponent<Props> {
     onRunQuery();
   };
 
+  onIndexNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, indexName: event.target.value });
+    // executes the query
+    onRunQuery();
+  };
+
   render() {
     const query = defaults(this.props.query, defaultQuery);
-    const { queryText, constant } = query;
+    const { queryText, constant, indexName } = query;
 
     return (
       <div className="gf-form">
@@ -43,6 +52,13 @@ export class QueryEditor extends PureComponent<Props> {
           onChange={this.onQueryTextChange}
           label="Query Text"
           tooltip="Not used yet"
+        />
+        <FormField
+          labelWidth={8}
+          value={indexName || ''}
+          onChange={this.onIndexNameChange}
+          label="Index Name"
+          tooltip="Index name to query"
         />
       </div>
     );
