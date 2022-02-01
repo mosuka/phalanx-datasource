@@ -9,6 +9,8 @@ import {
   FieldType,
 } from '@grafana/data';
 
+const MAX_INT32 = 2147483647;
+
 import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
@@ -25,55 +27,42 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const endpoint = this.endpoint;
 
     // Return a constant for each query.
-    const data = options.targets.map(async function(target) {
+    var data = [];
+    for (var i = 0; i < options.targets.length; i++) {
+      var target = options.targets[i];
+
       const query = defaults(target, defaultQuery);
-
       const indexName = target.indexName;
-
       var url = `${endpoint}/v1/indexes/${indexName}/_search`;
-
       let headers = {
         'Content-Type': 'application/json',
       };
 
-      let method = 'POST';
-
       let body = {
         query: `${query.queryText}`,
         start: 0,
-        num: 1000,
+        num: MAX_INT32,
         sort_by: '-_score',
       };
-
-      console.log('url', url);
-      console.log('headers', headers);
-      console.log('method', method);
-      console.log('body', body);
 
       const resp = await fetch(url, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(body),
-      })
-        .then(response => {
-          console.log('status', response.status);
-          return response.json();
-        })
-        .catch(error => {
-          console.log('error', error);
-          return `{}`;
-        });
-
-      console.log('resp', resp);
-
-      return new MutableDataFrame({
-        refId: query.refId,
-        fields: [
-          { name: 'Time', values: [from, to], type: FieldType.time },
-          { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
-        ],
       });
-    });
+      console.log('status', resp.status);
+      console.log('json', await resp.json());
+
+      data.push(
+        new MutableDataFrame({
+          refId: query.refId,
+          fields: [
+            { name: 'Time', values: [from, to], type: FieldType.time },
+            { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
+          ],
+        })
+      );
+    }
 
     return { data };
   }
