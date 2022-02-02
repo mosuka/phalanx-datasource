@@ -21,13 +21,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   }
 
   async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
-    const from = range!.from.valueOf();
-    const to = range!.to.valueOf();
+    // const { range } = options;
+    // const from = range!.from.valueOf();
+    // const to = range!.to.valueOf();
     const endpoint = this.endpoint;
 
     // Return a constant for each query.
-    var data = [];
+    var data: Array<MutableDataFrame<any>> = [];
     for (var i = 0; i < options.targets.length; i++) {
       var target = options.targets[i];
 
@@ -42,7 +42,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         query: `${query.queryText}`,
         start: 0,
         num: MAX_INT32,
-        sort_by: '-_score',
+        sort_by: '-datetime',
+        fields: ['host', 'user-identifier', 'datetime', 'method', 'request', 'protocol', 'status', 'bytes', 'referer'],
       };
 
       const resp = await fetch(url, {
@@ -51,17 +52,58 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         body: JSON.stringify(body),
       });
       console.log('status', resp.status);
-      console.log('json', await resp.json());
 
-      data.push(
-        new MutableDataFrame({
-          refId: query.refId,
-          fields: [
-            { name: 'Time', values: [from, to], type: FieldType.time },
-            { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
-          ],
-        })
-      );
+      var json = await resp.json();
+      console.log('json', json);
+
+      var docs = json.documents;
+      docs.forEach((doc: any) => {
+        var dataFrameFields: any[] = [];
+
+        var fields = doc.fields;
+        var fieldNames = Object.keys(fields);
+        fieldNames.forEach(fieldName => {
+          var fieldValues: any[] = [];
+          if (fields[fieldName] === 'object') {
+            fieldValues = fields[fieldName];
+          } else {
+            fieldValues.push(fields[fieldName]);
+          }
+
+          fieldValues.forEach(fieldValue => {
+            // Single value
+            var fieldType = FieldType.string;
+            switch (typeof fieldValues) {
+              case 'string':
+                fieldType = FieldType.string;
+                break;
+              case 'number':
+                fieldType = FieldType.number;
+                break;
+              case 'boolean':
+                fieldType = FieldType.boolean;
+                break;
+              default:
+                fieldType = FieldType.string;
+                break;
+            }
+
+            var dataFrameField = {
+              name: fieldName,
+              type: fieldType,
+              values: [fieldValues],
+            };
+            dataFrameFields.push(dataFrameField);
+          });
+        });
+
+        data.push(
+          new MutableDataFrame({
+            refId: query.refId,
+            fields: dataFrameFields,
+          })
+        );
+      });
     }
 
     return { data };

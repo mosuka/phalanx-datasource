@@ -18,13 +18,6 @@ export class QueryEditor extends PureComponent<Props> {
     onRunQuery();
   };
 
-  onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, constant: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
-  };
-
   onIndexNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query, onRunQuery } = this.props;
     onChange({ ...query, indexName: event.target.value });
@@ -34,18 +27,10 @@ export class QueryEditor extends PureComponent<Props> {
 
   render() {
     const query = defaults(this.props.query, defaultQuery);
-    const { queryText, constant, indexName } = query;
+    const { queryText, indexName } = query;
 
     return (
       <div className="gf-form">
-        <FormField
-          width={4}
-          value={constant}
-          onChange={this.onConstantChange}
-          label="Constant"
-          type="number"
-          step="0.1"
-        />
         <FormField
           labelWidth={8}
           value={queryText || ''}
