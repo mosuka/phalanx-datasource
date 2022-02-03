@@ -28,6 +28,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
     // Return a constant for each query.
     var data: Array<MutableDataFrame<any>> = [];
+
     for (var i = 0; i < options.targets.length; i++) {
       var target = options.targets[i];
 
@@ -51,59 +52,72 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         headers: headers,
         body: JSON.stringify(body),
       });
-      console.log('status', resp.status);
 
       var json = await resp.json();
-      console.log('json', json);
+
+      var dataFrame = new MutableDataFrame({
+        refId: query.refId,
+        fields: [
+          { name: 'host', type: FieldType.string },
+          { name: 'user-identifier', type: FieldType.string },
+          { name: 'datetime', type: FieldType.time },
+          { name: 'method', type: FieldType.string },
+          { name: 'request', type: FieldType.string },
+          { name: 'protocol', type: FieldType.string },
+          { name: 'status', type: FieldType.number },
+          { name: 'bytes', type: FieldType.number },
+          { name: 'referer', type: FieldType.string },
+        ],
+      });
 
       var docs = json.documents;
       docs.forEach((doc: any) => {
-        var dataFrameFields: any[] = [];
+        dataFrame.add(doc.fields);
 
-        var fields = doc.fields;
-        var fieldNames = Object.keys(fields);
-        fieldNames.forEach(fieldName => {
-          var fieldValues: any[] = [];
-          if (fields[fieldName] === 'object') {
-            fieldValues = fields[fieldName];
-          } else {
-            fieldValues.push(fields[fieldName]);
-          }
+        // var dataFrameFields: any[] = [];
 
-          fieldValues.forEach(fieldValue => {
-            // Single value
-            var fieldType = FieldType.string;
-            switch (typeof fieldValues) {
-              case 'string':
-                fieldType = FieldType.string;
-                break;
-              case 'number':
-                fieldType = FieldType.number;
-                break;
-              case 'boolean':
-                fieldType = FieldType.boolean;
-                break;
-              default:
-                fieldType = FieldType.string;
-                break;
-            }
+        // var fields = doc.fields;
+        // var fieldNames = Object.keys(fields);
+        // fieldNames.forEach(fieldName => {
+        //   // field values
+        //   var fieldValues: any[] = [];
+        //   if (fields[fieldName] === 'object') {
+        //     fieldValues = fields[fieldName];
+        //   } else {
+        //     fieldValues.push(fields[fieldName]);
+        //   }
 
-            var dataFrameField = {
-              name: fieldName,
-              type: fieldType,
-              values: [fieldValues],
-            };
-            dataFrameFields.push(dataFrameField);
-          });
-        });
+        //   // field type
+        //   var fieldType = FieldType.string;
+        //   switch (typeof fieldValues[0]) {
+        //     case 'string':
+        //       fieldType = FieldType.string;
+        //       break;
+        //     case 'number':
+        //       fieldType = FieldType.number;
+        //       break;
+        //     case 'boolean':
+        //       fieldType = FieldType.boolean;
+        //       break;
+        //     default:
+        //       fieldType = FieldType.string;
+        //       break;
+        //   }
 
-        data.push(
-          new MutableDataFrame({
-            refId: query.refId,
-            fields: dataFrameFields,
-          })
-        );
+        //   // data frame field
+        //   var dataFrameField = {
+        //     name: fieldName,
+        //     type: fieldType,
+        //     values: [fieldValues],
+        //   };
+
+        //   dataFrameFields.push(dataFrameField);
+        // });
+
+        // dataFrame.add(dataFrameFields);
       });
+
+      data.push(dataFrame);
     }
 
     return { data };
