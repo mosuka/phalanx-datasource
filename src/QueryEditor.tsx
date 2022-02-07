@@ -11,13 +11,6 @@ const { FormField } = LegacyForms;
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
 export class QueryEditor extends PureComponent<Props> {
-  onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, queryText: event.target.value });
-    // executes the query
-    onRunQuery();
-  };
-
   onIndexNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query, onRunQuery } = this.props;
     onChange({ ...query, indexName: event.target.value });
@@ -25,25 +18,60 @@ export class QueryEditor extends PureComponent<Props> {
     onRunQuery();
   };
 
+  onTimestampFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, timestampField: event.target.value });
+    // executes the query
+    onRunQuery();
+  };
+
+  onQueryStringChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, queryString: event.target.value });
+    // executes the query
+    onRunQuery();
+  };
+
+  onFieldListChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, fieldList: event.target.value });
+    // executes the query
+    onRunQuery();
+  };
+
   render() {
     const query = defaults(this.props.query, defaultQuery);
-    const { queryText, indexName } = query;
+    const { indexName, timestampField, queryString, fieldList } = query;
 
     return (
       <div className="gf-form">
         <FormField
-          labelWidth={8}
-          value={queryText || ''}
-          onChange={this.onQueryTextChange}
-          label="Query Text"
-          tooltip="Not used yet"
-        />
-        <FormField
-          labelWidth={8}
+          labelWidth={10}
           value={indexName || ''}
           onChange={this.onIndexNameChange}
           label="Index Name"
-          tooltip="Index name to query"
+          tooltip="Index name to search for"
+        />
+        <FormField
+          labelWidth={10}
+          value={timestampField || ''}
+          onChange={this.onTimestampFieldChange}
+          label="Timestamp Field"
+          tooltip="Timestamp field to use for the query"
+        />
+        <FormField
+          labelWidth={10}
+          value={queryString || ''}
+          onChange={this.onQueryStringChange}
+          label="Query Text"
+          tooltip="Query string you wish to parse and use for search"
+        />
+        <FormField
+          labelWidth={10}
+          value={fieldList || ''}
+          onChange={this.onFieldListChange}
+          label="Field List"
+          tooltip="Enter the field name to be retrieved, separated by commas"
         />
       </div>
     );
