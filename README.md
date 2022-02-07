@@ -4,7 +4,7 @@ This is a Grafana Data Source Plugin for [Phalanx](https://github.com/mosuka/pha
 
 This Data Source Plugin allows you to visualize the data indexed in Phalanx.
 
-![phalanx-datasource](https://user-images.githubusercontent.com/970948/152336754-0b15e6da-1599-498b-9c01-973afbb7c68c.png)
+![phalanx-datasource](https://user-images.githubusercontent.com/970948/152789945-2e398ba3-9964-417a-b745-c0ab8d936b4d.png)
 
 
 
