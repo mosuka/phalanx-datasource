@@ -8,7 +8,7 @@ build:
 
 .PHONY: dist
 dist:
-	mv dist/ $(NAMA)
+	cp -pr ./dist ./$(NAMA)
 	zip $(NAMA)-$(TAG).zip $(NAMA) -r
 	md5sum $(NAMA)-$(TAG).zip > $(NAMA)-$(TAG).md5
 	rm -rf $(NAMA)
