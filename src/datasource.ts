@@ -159,10 +159,20 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       var dataFrame = new MutableDataFrame({
         refId: query.refId,
         fields: dataFrameFields,
+        meta: {
+          preferredVisualisationType: 'logs',
+        },
       });
 
       var docs = searchResp.documents;
       docs.forEach((doc: any) => {
+        for (const fieldName of Object.keys(doc.fields)) {
+          switch (indexMapping[fieldName].type) {
+            case 'datetime':
+              doc.fields[fieldName] = new Date(doc.fields[fieldName]).getTime();
+              break;
+          }
+        }
         dataFrame.add(doc.fields);
       });
 
