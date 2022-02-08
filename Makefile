@@ -10,6 +10,7 @@ build:
 dist:
 	mv dist/ $(NAMA)
 	zip $(NAMA)-$(TAG).zip $(NAMA) -r
+	md5sum $(NAMA)-$(TAG).zip > $(NAMA)-$(TAG).md5
 	rm -rf $(NAMA)
 
 .PHONY: tag
