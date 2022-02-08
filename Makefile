@@ -1,4 +1,4 @@
-NAMA ?= phalanx-datasource
+NAMA ?= mosuka-phalanx-datasource
 TAG ?=
 
 .PHONY: build
